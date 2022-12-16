@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { Formik, Form } from 'formik'
 import * as Yup from 'yup';
 import Cookies from 'js-cookie'
-import Input from "../components/Input";
+import Input from "../Components/Input";
 import { QueryClient, useMutation } from '@tanstack/react-query'
 import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';

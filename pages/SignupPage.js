@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { Formik, Form } from 'formik'
 import * as Yup from 'yup';
-import Input from "../components/Input";
+import Input from "../Components/Input";
 import {
   useQuery,
   useMutation,
