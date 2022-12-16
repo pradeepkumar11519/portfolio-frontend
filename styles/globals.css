@@ -39,4 +39,5 @@
 
 .smenu{
     left:0%;
+    overflow-y: scroll;
   }

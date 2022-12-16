@@ -1,0 +1,354 @@
+import {
+    dehydrate,
+    QueryClient,
+    useMutation,
+    useQuery,
+    useQueryClient,
+} from "@tanstack/react-query";
+import axios from "axios";
+import { useRouter } from "next/router";
+import React, { useContext, useEffect, useState } from "react";
+import { IoSend } from "react-icons/io5";
+import { AiFillDelete, AiFillTags, AiFillCloseCircle } from "react-icons/ai";
+import { GrUpdate } from "react-icons/gr";
+import Tippy from "@tippyjs/react";
+import "tippy.js/dist/tippy.css";
+import context from "../Context/context";
+import Modal from "react-modal";
+import { toast } from "react-toastify";
+import ScaleLoader from 'react-spinners/ScaleLoader'
+import Zoom from 'react-reveal/Zoom';
+import Bounce from 'react-reveal/Bounce';
+import { AiOutlineSend } from "react-icons/ai"
+
+export default function Comment({ cookies, CommentData }) {
+    const { user, IsOpen1, setIsOpen1, authtoken } = useContext(context)
+    const [parentname, setparentname] = useState(null)
+    const [commentdata, setcommentdata] = useState({
+        data: {
+            user: user?.username, comment: null, parent: null
+        },
+        token: cookies?.access
+    })
+
+    const [updatedvalue, setupdatedvalue] = useState(null)
+    const [commentid, setcommentid] = useState(null)
+    const ChangeTagColour = (id, user) => {
+        if (
+            document.getElementById(`tagbtn${id}`).style.backgroundColor === "black"
+
+        ) {
+            setcommentdata({ ...commentdata, data: { ...commentdata.data, parent: null } })
+            setparentname(null)
+            document.getElementById(`tagbtn${id}`).style.color = "black";
+            document.getElementById(`tagbtn${id}`).style.borderColor = "black";
+            // setUserComment(null);
+            // setparent(null);
+            document.getElementById(`tagbtn${id}`).style.backgroundColor =
+                "transparent";
+            const elementlist = document.querySelectorAll(`#abovebtn`);
+
+            for (let i = 0; i < elementlist.length; i++) {
+                if (`tagbtn${id}` !== elementlist[i].children[0].getAttribute("id")) {
+                    elementlist[i].children[0].style.display = "block";
+                }
+            }
+
+        } else {
+            setcommentdata({ ...commentdata, data: { ...commentdata.data, parent: id } })
+            setparentname(user)
+            document.getElementById(`tagbtn${id}`).style.backgroundColor = "black";
+            document.getElementById(`tagbtn${id}`).style.color = "white";
+            document.getElementById(`tagbtn${id}`).style.borderColor = "white";
+            const elementlist = document.querySelectorAll(`#abovebtn`);
+
+            for (let i = 0; i < elementlist.length; i++) {
+                if (`tagbtn${id}` !== elementlist[i].children[0].getAttribute("id")) {
+                    elementlist[i].children[0].style.display = "none";
+                }
+            }
+        }
+    }
+    const temp1 = useAddComment()
+    const onSubmit = () => {
+        temp1.mutate(commentdata)
+        document.getElementById('comment').value = ""
+        setcommentdata({ ...commentdata, data: { ...commentdata.data, parent: null } })
+        setcommentdata({ ...commentdata, data: { ...commentdata.data, comment: null } })
+        setparentname(null)
+
+    }
+    const temp2 = useDeleteComment()
+    const onDeleteComment = (deletedata) => {
+        temp2.mutate(deletedata)
+
+    }
+    const temp3 = useUpdateComment()
+    const onUpdateComment = (updatedata) => {
+        temp3.mutate(updatedata)
+
+    }
+    const customStyles = {
+        overlay: {
+            position: "fixed",
+            zIndex: 1020,
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            background: "rgba(0,0,0, 0.3)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+        },
+        content: {
+            background: "white",
+            // width: '20rem',
+            left: "0%",
+            width: "250px",
+            overflowY: "auto",
+            position: "relative",
+            border: "1px solid #ccc",
+            borderRadius: "0.3rem",
+        },
+    };
+    
+    return (
+        <div>
+            <h1 className="text-center text-4xl font-bold ">COMMENTS</h1>
+            <div className="mx-10 mt-10 border-2 border-orange-500 flex rounded-full bg-black">
+                <input type="text" placeholder="Type Your Comment" name="comment" id="comment" className="w-full p-2 outline-none rounded-full bg-transparent text-white font-bold" onChange={(e) => {
+                    setcommentdata({ ...commentdata, data: { ...commentdata.data, comment: e.target.value } })
+                }} />
+                {user && authtoken ? (
+                    <div onClick={onSubmit} disabled={!user || !authtoken || temp1.isLoading || temp2.isLoading || temp3.isLoading}>
+                        <AiOutlineSend className="p-2 border-2 border-black w-10 h-10 rounded-full m-2 bg-orange-500 text-white focus:ring-4 focus:ring-opacity-50 focus:ring-orange-500 transition-all fade-in-out cursor-pointer" />
+                    </div>
+                ) : (
+                    <button className="p-2 border-2 w-[250px]  border-black  rounded-full m-2 text-xs sm:text-lg  bg-orange-500 text-white focus:ring-4 focus:ring-opacity-50 focus:ring-orange-500 transition-all fade-in-out" onClick={onSubmit} disabled={!user || !authtoken || temp1.isLoading || temp2.isLoading || temp3.isLoading}>
+                        Login To Comment
+                    </button>
+                )}
+
+
+
+            </div>
+            <div>
+
+                {parentname ? (
+                    <div className="border-2 border-red-500 bg-gradient-to-br from-orange-500 to-yellow-500 p-2 mx-8 mt-8 rounded-md">
+                        <h1 className="text-center text-2xl font-bold">You Have Tagged {parentname}</h1>
+                    </div>
+                ) : (
+                    null
+                )}
+
+            </div>
+            <div className='mb-10'>
+                {
+                    CommentData.map((comment) => {
+                        return (
+                            <div className="mx-20 mt-10 shadow-2xl border-x-2 border-t-2 border-black rounded-md" key={comment.id}>
+
+                                <br />
+                                <div className='md:grid grid-cols-[100px_auto_250px_100px]  '>
+                                    <div className='border-b-2 border-black'>
+                                        <p className='text-center my-3 rounded-full w-fit mx-auto px-4 py-2 bg-black text-white'>{comment.user.slice(0, 1)}</p>
+                                        <p className='text-center my-2 mx-2'>{comment.user}</p>
+                                    </div>
+                                    <div className='border-b-2 border-black p-2'>
+                                        {comment.parent ? (
+                                            <div className="mx-3">
+                                                <span className='font-bold'>Replied To </span> <span>{comment.parent_name} </span>
+                                                <span className="font-bold"> On : </span> <span>{comment.parent_comment}</span>
+                                                <div className="">{comment.comment} </div>
+                                            </div>
+                                        ) : (
+                                            <div className="mx-3">
+                                                <span className='font-bold'>Commented : </span>
+                                                <span className="">{comment.comment} </span>
+                                            </div>
+                                        )}
+
+
+                                    </div>
+
+                                    <div className='border-b-2 border-black p-3'>
+                                        <p className='font-bold text-center'>On {comment.datestamp} {comment.timestamp}</p>
+                                    </div>
+                                    <div className='border-b-2 border-black p-3 flex md:block justify-center '>
+                                        {user?.username !== comment.user ? (
+                                            <Tippy content="Tag">
+
+                                                <div id="abovebtn" className="md:my-auto">
+                                                    <button id={`tagbtn${comment.id}`}
+                                                        onClick={() => {
+
+                                                            ChangeTagColour(comment.id, comment.user)
+
+
+                                                        }} className="border-2 border-black mx-2 md:my-3  p-1 w-fit cursor-pointer ">
+                                                        <AiFillTags />
+                                                    </button>
+
+                                                </div>
+                                            </Tippy>
+                                        ) : (
+                                            null
+                                        )}
+                                        {user?.username === comment.user ? (
+                                            <div className="flex justify-center ">
+                                                <Tippy content="Delete">
+                                                    <button className='border-2 border-black mx-2 p-1 cursor-pointer ' onClick={() => {
+                                                        onDeleteComment({ id: comment.id, token: cookies?.access })
+                                                        setcommentid(comment.id)
+                                                    }}>
+                                                        <AiFillDelete />
+                                                    </button>
+                                                </Tippy>
+                                                <Tippy content="Update">
+                                                    <button className="border-2 border-black mx-2 p-1 cursor-pointer " onClick={() => {
+                                                        setcommentid(comment.id)
+                                                        setIsOpen1(true)
+                                                    }}>
+                                                        <GrUpdate />
+                                                    </button>
+                                                </Tippy>
+                                            </div>
+                                        ) : (
+                                            null
+                                        )}
+
+
+
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        )
+                    })
+                }
+
+            </div>
+            <Modal
+                isOpen={IsOpen1}
+                style={customStyles}
+                onRequestClose={() => {
+                    setIsOpen1(false);
+                }}
+            >
+                <div>
+                    <button
+                        className="mb-5"
+                        onClick={() => {
+                            setIsOpen1(false);
+                        }}
+                    >
+                        <AiFillCloseCircle className="w-6 h-6 focus:ring-4 focus:ring-opacity-50 focus:ring-black transition-all rounded-full fade-in-out " />
+                    </button>
+                    <div className="text-xl font-medium mb-">
+                        Update Your Comment
+                    </div>
+                    <textarea
+                        className="w-full border-2 border-black ring-4 ring-opacity-50 ring-black focus:ring-8 focus:ring-opacity-50 focus:ring-black rounded-md  p-1 font-medium text-black my-2"
+                        type="text"
+                        onChange={(e) => {
+                            setupdatedvalue(e.target.value);
+                        }}
+                    />
+                    <div className="flex flex-col justify-center">
+                        <button
+                            className="p-2 bg-black text-white my-2  rounded-md"
+                            onClick={() => {
+                                onUpdateComment({
+                                    id: commentid,
+                                    data: {
+                                        comment: updatedvalue,
+                                    },
+                                    token: cookies?.access,
+                                });
+                            }}
+                        >
+                            {(temp3.isLoading) ? (<ScaleLoader className="text-white" color={"white"} />) : ("Update")}
+                        </button>
+                    </div>
+                </div>
+            </Modal>
+        </div>
+    )
+}
+
+
+const AddComment = async (data) => {
+    return axios.post('https://pradeepkumarrebbavarapu705.pythonanywhere.com//api/v1/AddComment/', data.data, {
+        headers: {
+            Authorization: 'Bearer ' + String(data.token)
+        }
+    })
+}
+
+const useAddComment = () => {
+    const queryClient = useQueryClient()
+    return useMutation(AddComment, {
+        onSuccess: () => {
+            queryClient.invalidateQueries(["UsersComments"])
+            toast.success('Comment Added Succesfully')
+        },
+        onError: (_error, context) => {
+            queryClient.setQueryData(['UsersComments'], context.previousData)
+            toast.error('Comment Couldnt Be Added Due To An Error')
+        },
+    })
+}
+
+const DeleteComment = (data) => {
+    return axios.delete(`https://pradeepkumarrebbavarapu705.pythonanywhere.com//api/v1/RUDComment/${data.id}/`, {
+        headers: {
+            Authorization: 'Bearer ' + data.token
+        }
+    })
+}
+
+
+const useDeleteComment = () => {
+    const queryClient = useQueryClient()
+    return useMutation(DeleteComment, {
+        onSuccess: () => {
+            queryClient.invalidateQueries(['UsersComments'])
+            toast.success('Comment Deleted Succesfully')
+
+        },
+        onError: () => {
+            queryClient.setQueryData(['UsersComments'], context.previousData)
+            toast.error('Comment Couldnt Be Deleted Due To An Error')
+        }
+    })
+}
+
+
+const UpdateComment = (data) => {
+    return axios.put(`https://pradeepkumarrebbavarapu705.pythonanywhere.com//api/v1/RUDComment/${data.id}/`, data.data, {
+        headers: {
+            Authorization: 'Bearer ' + data.token
+        }
+    })
+}
+
+const useUpdateComment = () => {
+    const { setIsOpen1 } = useContext(context)
+    const queryClient = useQueryClient()
+    return useMutation(UpdateComment, {
+        onSuccess: () => {
+            queryClient.invalidateQueries(['UsersComments'])
+            toast.success('Comment Updated Succesfully')
+            setIsOpen1(false)
+        },
+        onError: () => {
+            queryClient.setQueryData(['UsersComments'], context.previousData)
+            toast.error('Comment Couldnt Be Updated Due To An Error')
+            setIsOpen1(false)
+        },
+    })
+}
+
