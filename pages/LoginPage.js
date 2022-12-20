@@ -9,6 +9,7 @@ import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import { useContext } from "react";
 import Context from "../Context/context";
+import ScaleLoader from "react-spinners/ScaleLoader";
 
 export default function LoginPage() {
   const initialValues = {
@@ -43,7 +44,7 @@ const onSubmit = (values) => {
                     <Input className='w-[200px] sm:w-full my-[5px] border-b-2 bg-transparent  outline-none py-[10px]' type="text" id="username" name="username" placeholder='Username' />
                     <Input className='w-[200px] sm:w-full my-[5px] border-b-2 bg-transparent  outline-none py-[10px]' type="email" id="email" name="email" placeholder='Email' />
                     <Input className='w-[200px] sm:w-full my-[5px] border-b-2 bg-transparent  outline-none py-[10px]' type="password" id="password" name="password" placeholder='Password' />
-                    <button className='sm:w-[85%] py-[10px] px-[30px] block sm:mx-auto bg-gradient-to-r from-orange-600 rounded-full text-white to-yellow-500 my-10' id="submit-btn" type="submit">LOGIN</button>
+                    <button disabled={!formik.errors || formik.isValidating} className='sm:w-[85%] py-[10px] px-[30px] block sm:mx-auto bg-gradient-to-r from-orange-600 rounded-full text-white to-yellow-500 my-10' id="submit-btn" type="submit">{less.isLoading ? <ScaleLoader/>: "Login"}</button>
                   </Form>
                 )
               }

@@ -7,7 +7,7 @@ export default function ContactPage() {
     const [contactData,setcontactData] = useState({name:null,email:null,message:null})
     
     const onSubmit = async () =>{
-        await axios.post('https://pradeepkumarrebbavarapu705.pythonanywhere.com//api/v1/ContactUs/',contactData).then((response)=>{
+        await axios.post('https://pradeepkumarrebbavarapu705.pythonanywhere.com/api/v1/ContactUs/',contactData).then((response)=>{
             toast.success('Your Message Succesfully Sent')
         }).catch((error)=>{
             toast.error('Recheck Your Entered Data')

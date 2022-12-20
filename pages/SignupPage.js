@@ -13,6 +13,7 @@ import {
 } from '@tanstack/react-query'
 import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
+import ScaleLoader from "react-spinners/ScaleLoader";
 export default function SignupPage() {
   const initialValues = {
     email: '',
@@ -63,7 +64,7 @@ export default function SignupPage() {
                     <Input className='w-[200px] sm:w-full my-[5px] border-b-2 bg-transparent  outline-none py-[10px] text-white' type="email" id="email" name="email" placeholder='Email' />
                     <Input className='w-[200px] sm:w-full my-[5px] border-b-2 bg-transparent  outline-none py-[10px] text-white' type="password" id="password" name="password" placeholder='Password' />
                     <Input className='w-[200px] sm:w-full my-[5px] border-b-2 bg-transparent  outline-none py-[10px] text-white' type="password" id="confirm_password" name="confirm_password" placeholder='Confirm Password' />
-                    <button className='sm:w-[85%] py-[10px] px-[30px] block sm:mx-auto bg-gradient-to-r from-orange-600 rounded-full text-white to-yellow-500 my-10' id="submit-btn" type="submit">SIGNUP</button>
+                    <button disabled={!formik.errors ||  formik.isValidating} className='sm:w-[85%] py-[10px] px-[30px] block sm:mx-auto bg-gradient-to-r from-orange-600 rounded-full text-white to-yellow-500 my-10' id="submit-btn" type="submit">{ less.isLoading?<ScaleLoader/>:"Signup"}</button>
                   </Form>
                 )
               }
@@ -78,7 +79,7 @@ export default function SignupPage() {
 
 const CreateUser = (user) => {
 
-	return axios.post('https://pradeepkumarrebbavarapu705.pythonanywhere.com//api/v1/Signup/', user)
+	return axios.post('https://pradeepkumarrebbavarapu705.pythonanywhere.com/api/v1/Signup/', user)
 }
 const useCreateUser = () => {
 	const router = useRouter()

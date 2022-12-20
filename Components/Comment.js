@@ -16,9 +16,8 @@ import "tippy.js/dist/tippy.css";
 import context from "../Context/context";
 import Modal from "react-modal";
 import { toast } from "react-toastify";
-import ScaleLoader from 'react-spinners/ScaleLoader'
-import Zoom from 'react-reveal/Zoom';
-import Bounce from 'react-reveal/Bounce';
+import { Fade } from "react-awesome-reveal";
+import BarLoader from 'react-spinners/BarLoader'
 import { AiOutlineSend } from "react-icons/ai"
 
 export default function Comment({ cookies, CommentData }) {
@@ -112,7 +111,6 @@ export default function Comment({ cookies, CommentData }) {
             borderRadius: "0.3rem",
         },
     };
-    
     return (
         <div>
             <h1 className="text-center text-4xl font-bold ">COMMENTS</h1>
@@ -121,11 +119,22 @@ export default function Comment({ cookies, CommentData }) {
                     setcommentdata({ ...commentdata, data: { ...commentdata.data, comment: e.target.value } })
                 }} />
                 {user && authtoken ? (
-                    <div onClick={onSubmit} disabled={!user || !authtoken || temp1.isLoading || temp2.isLoading || temp3.isLoading}>
-                        <AiOutlineSend className="p-2 border-2 border-black w-10 h-10 rounded-full m-2 bg-orange-500 text-white focus:ring-4 focus:ring-opacity-50 focus:ring-orange-500 transition-all fade-in-out cursor-pointer" />
-                    </div>
+
+
+
+                    <button className="p-2 border-2 w-fit  border-black  rounded-full m-2 text-xs sm:text-lg  bg-orange-500 text-white focus:ring-4 focus:ring-opacity-50 focus:ring-orange-500 transition-all fade-in-out" onClick={onSubmit} disabled={!user || !authtoken || temp1.isLoading || temp2.isLoading || temp3.isLoading}>
+                        {temp1.isLoading ? (
+                            <BarLoader className="w-10 h-10" />
+                        ) : (
+                            <AiOutlineSend />
+                        )}
+
+                    </button>
+
+
+
                 ) : (
-                    <button className="p-2 border-2 w-[250px]  border-black  rounded-full m-2 text-xs sm:text-lg  bg-orange-500 text-white focus:ring-4 focus:ring-opacity-50 focus:ring-orange-500 transition-all fade-in-out" onClick={onSubmit} disabled={!user || !authtoken || temp1.isLoading || temp2.isLoading || temp3.isLoading}>
+                    <button className="p-2 border-2 w-[250px]  border-black  rounded-full m-2 text-xs sm:text-lg  bg-orange-500 text-white focus:ring-4 focus:ring-opacity-50 focus:ring-orange-500 transition-all fade-in-out" disabled={!user || !authtoken || temp1.isLoading || temp2.isLoading || temp3.isLoading}>
                         Login To Comment
                     </button>
                 )}
@@ -133,104 +142,175 @@ export default function Comment({ cookies, CommentData }) {
 
 
             </div>
-            <div>
+            {CommentData.length === 0 ? (
+                <h1 className='text-center my-10 font-bold text-xl'>No Comments Available At This Moment</h1>
+            ) : (
+                <>
+                    <div>
 
-                {parentname ? (
-                    <div className="border-2 border-red-500 bg-gradient-to-br from-orange-500 to-yellow-500 p-2 mx-8 mt-8 rounded-md">
-                        <h1 className="text-center text-2xl font-bold">You Have Tagged {parentname}</h1>
+                        {parentname ? (
+                            <div className="border-2 border-red-500 bg-gradient-to-br from-orange-500 to-yellow-500 p-2 mx-8 mt-8 rounded-md">
+                                <Fade>
+                                <h1 className="text-center text-2xl font-bold">
+                                    You Have Tagged {parentname}</h1></Fade>
+                            </div>
+                        ) : (
+                            null
+                        )}
+
                     </div>
-                ) : (
-                    null
-                )}
+                    <div className='mb-10'>
+                        {
+                            CommentData?.map((comment) => {
+                                return (
+                                    <div className="mx-20 mt-10 shadow-2xl border-x-2 border-t-2 border-black rounded-md" key={comment.id}>
 
-            </div>
-            <div className='mb-10'>
-                {
-                    CommentData.map((comment) => {
-                        return (
-                            <div className="mx-20 mt-10 shadow-2xl border-x-2 border-t-2 border-black rounded-md" key={comment.id}>
+                                        <br />
+                                        <div className='md:grid grid-cols-[100px_auto_250px_100px]  '>
 
-                                <br />
-                                <div className='md:grid grid-cols-[100px_auto_250px_100px]  '>
-                                    <div className='border-b-2 border-black'>
-                                        <p className='text-center my-3 rounded-full w-fit mx-auto px-4 py-2 bg-black text-white'>{comment.user.slice(0, 1)}</p>
-                                        <p className='text-center my-2 mx-2'>{comment.user}</p>
-                                    </div>
-                                    <div className='border-b-2 border-black p-2'>
-                                        {comment.parent ? (
-                                            <div className="mx-3">
-                                                <span className='font-bold'>Replied To </span> <span>{comment.parent_name} </span>
-                                                <span className="font-bold"> On : </span> <span>{comment.parent_comment}</span>
-                                                <div className="">{comment.comment} </div>
+                                            <div className='border-b-2 border-black'>
+                                                <Fade>
+                                                    <p className='text-center my-3 rounded-full w-fit mx-auto px-4 py-2 bg-black text-white uppercase font-bold'>{comment.user.slice(0, 1)}</p>
+                                                    <p className='text-center my-2 mx-2'>{comment.user}</p>
+                                                </Fade>
                                             </div>
-                                        ) : (
-                                            <div className="mx-3">
-                                                <span className='font-bold'>Commented : </span>
-                                                <span className="">{comment.comment} </span>
+
+                                            <div className='border-b-2 border-black p-2'>
+                                                <Fade>
+                                                    {comment.parent ? (
+                                                        <div className="mx-3">
+                                                            <span className='font-bold'>Replied To </span> <span>{comment.parent_name} </span>
+                                                            <span className="font-bold"> On : </span> <span>{comment.parent_comment}</span>
+                                                            <div className="">{comment.comment} </div>
+                                                        </div>
+
+                                                    ) : (
+                                                        <div className="mx-3">
+                                                            <span className='font-bold'>Commented : </span>
+                                                            <span className="">{comment.comment} </span>
+                                                        </div>
+                                                    )}
+                                                </Fade>
+
                                             </div>
-                                        )}
+
+                                            <div className='border-b-2 border-black p-3'>
+                                                <Fade>
+                                                    <p className='font-bold text-center'>On {comment.datestamp} {comment.timestamp}</p></Fade>
+                                            </div>
+
+                                            {user && authtoken ? (
+                                                <div className='border-b-2 border-black p-3 flex md:block justify-center '>
+                                                    {user?.username !== comment.user ? (
+                                                        
+                                                            <Fade>
+                                                                <Tippy content="Tag">
+                                                                <div id="abovebtn" className="md:my-auto">
+                                                                    <button id={`tagbtn${comment.id}`}
+                                                                        onClick={() => {
+                                                                            ChangeTagColour(comment.id, comment.user)
 
 
-                                    </div>
+                                                                        }} className="border-2 border-black mx-2 md:my-3  p-1 w-fit cursor-pointer ">
+                                                                        <AiFillTags />
+                                                                    </button>
 
-                                    <div className='border-b-2 border-black p-3'>
-                                        <p className='font-bold text-center'>On {comment.datestamp} {comment.timestamp}</p>
-                                    </div>
-                                    <div className='border-b-2 border-black p-3 flex md:block justify-center '>
-                                        {user?.username !== comment.user ? (
-                                            <Tippy content="Tag">
+                                                                </div>
+                                                                </Tippy>
+                                                            </Fade>
+                                                        
+                                                    ) : (
+                                                        null
+                                                    )}
+                                                    {user?.username === comment.user ? (
+                                                        <div className="flex justify-center ">
+                                                            <Fade>
+                                                                <Tippy content="Delete">
+                                                                    <button className='border-2 border-black mx-2 p-1 cursor-pointer ' onClick={() => {
+                                                                        onDeleteComment({ id: comment.id, token: cookies?.access })
+                                                                        setcommentid(comment.id)
+                                                                    }}>
+                                                                        <AiFillDelete />
+                                                                    </button>
+                                                                </Tippy>
+                                                            </Fade>
+                                                            <Fade>
+                                                                <Tippy content="Update">
+                                                                    <button className="border-2 border-black mx-2 p-1 cursor-pointer " onClick={() => {
+                                                                        setcommentid(comment.id)
+                                                                        setIsOpen1(true)
+                                                                    }}>
+                                                                        <GrUpdate />
+                                                                    </button>
+                                                                </Tippy>
+                                                            </Fade>
+                                                        </div>
+                                                    ) : (
+                                                        null
+                                                    )}
 
-                                                <div id="abovebtn" className="md:my-auto">
-                                                    <button id={`tagbtn${comment.id}`}
-                                                        onClick={() => {
-
-                                                            ChangeTagColour(comment.id, comment.user)
 
 
-                                                        }} className="border-2 border-black mx-2 md:my-3  p-1 w-fit cursor-pointer ">
-                                                        <AiFillTags />
-                                                    </button>
 
                                                 </div>
-                                            </Tippy>
-                                        ) : (
-                                            null
-                                        )}
-                                        {user?.username === comment.user ? (
-                                            <div className="flex justify-center ">
-                                                <Tippy content="Delete">
-                                                    <button className='border-2 border-black mx-2 p-1 cursor-pointer ' onClick={() => {
-                                                        onDeleteComment({ id: comment.id, token: cookies?.access })
-                                                        setcommentid(comment.id)
-                                                    }}>
-                                                        <AiFillDelete />
-                                                    </button>
-                                                </Tippy>
-                                                <Tippy content="Update">
-                                                    <button className="border-2 border-black mx-2 p-1 cursor-pointer " onClick={() => {
-                                                        setcommentid(comment.id)
-                                                        setIsOpen1(true)
-                                                    }}>
-                                                        <GrUpdate />
-                                                    </button>
-                                                </Tippy>
-                                            </div>
-                                        ) : (
-                                            null
-                                        )}
+                                            ) : (
+                                                <div className='border-b-2 border-black p-3 flex md:block justify-center '>
+
+                                                    
+                                                        <Fade>
+                                                        <Tippy content="Login To Tag">
+                                                            <div id="abovebtn" className="md:my-auto mx-auto flex justify-center">
+                                                                <button diabled={true} id={`tagbtn${comment.id}`}
+                                                                    className="border-2 border-black mx-2 md:my-3  p-1 w-fit cursor-pointer ">
+                                                                    <AiFillTags />
+                                                                </button>
+
+                                                            </div>
+                                                            </Tippy>
+                                                        </Fade>
+                                                    
+
+
+                                                    <div className="flex justify-center ">
+                                                        <Fade>
+                                                            <Tippy content="Login To Delete">
+                                                                <div>
+                                                                <button disabled={true} className='border-2 border-black mx-2 p-1 cursor-pointer '>
+                                                                    <AiFillDelete />
+                                                                </button>
+                                                                </div>
+                                                            </Tippy>
+                                                        </Fade>
+                                                        <Fade>
+                                                            <Tippy content="Login To Update">
+                                                                <div>
+                                                                <button disabled={true} className="border-2 border-black mx-2 p-1 cursor-pointer ">
+                                                                    <GrUpdate />
+                                                                </button>
+                                                                </div>
+                                                            </Tippy>
+                                                        </Fade>
+                                                    </div>
 
 
 
 
+
+                                                </div>
+                                            )}
+
+
+
+                                        </div>
                                     </div>
+                                )
+                            })
+                        }
 
-                                </div>
-                            </div>
-                        )
-                    })
-                }
+                    </div >
+                </>
+            )}
 
-            </div>
             <Modal
                 isOpen={IsOpen1}
                 style={customStyles}
@@ -270,18 +350,18 @@ export default function Comment({ cookies, CommentData }) {
                                 });
                             }}
                         >
-                            {(temp3.isLoading) ? (<ScaleLoader className="text-white" color={"white"} />) : ("Update")}
+                            {(temp3.isLoading) ? (<BarLoader className="text-white mx-auto text-center" color={"white"} />) : ("Update")}
                         </button>
                     </div>
                 </div>
             </Modal>
-        </div>
+        </div >
     )
 }
 
 
 const AddComment = async (data) => {
-    return axios.post('https://pradeepkumarrebbavarapu705.pythonanywhere.com//api/v1/AddComment/', data.data, {
+    return axios.post('https://pradeepkumarrebbavarapu705.pythonanywhere.com/api/v1/AddComment/', data.data, {
         headers: {
             Authorization: 'Bearer ' + String(data.token)
         }
@@ -303,7 +383,7 @@ const useAddComment = () => {
 }
 
 const DeleteComment = (data) => {
-    return axios.delete(`https://pradeepkumarrebbavarapu705.pythonanywhere.com//api/v1/RUDComment/${data.id}/`, {
+    return axios.delete(`https://pradeepkumarrebbavarapu705.pythonanywhere.com/api/v1/RUDComment/${data.id}/`, {
         headers: {
             Authorization: 'Bearer ' + data.token
         }
@@ -328,7 +408,7 @@ const useDeleteComment = () => {
 
 
 const UpdateComment = (data) => {
-    return axios.put(`https://pradeepkumarrebbavarapu705.pythonanywhere.com//api/v1/RUDComment/${data.id}/`, data.data, {
+    return axios.put(`https://pradeepkumarrebbavarapu705.pythonanywhere.com/api/v1/RUDComment/${data.id}/`, data.data, {
         headers: {
             Authorization: 'Bearer ' + data.token
         }

@@ -21,18 +21,18 @@ export default function OffCanvasNavbar() {
       )}
 
       <ul>
-        <li className='my-2 mx-auto border-2 p-2 rounded-md text-center w-[200px] bg-black text-white'><Link href="/">Home</Link></li>
-        <li className='my-2 mx-auto border-2 p-2 rounded-md text-center w-[200px] bg-black text-white'><Link href="/SignupPage">Signup</Link></li>
+      <Link className='' href="/"><li className='my-2 mx-auto border-2 p-2 rounded-md text-center w-[200px] bg-black text-white'>Home</li></Link>
+        <Link className='' href="/SignupPage"><li className='my-2 mx-auto border-2 p-2 rounded-md text-center w-[200px] bg-black text-white'>Signup</li></Link>
         {user && authtoken ? (
           <li onClick={Logout} className='my-2 mx-auto border-2 p-2 rounded-md text-center w-[200px] bg-black text-white'><button>Logout</button></li>
         ) : (
-          <li className='my-2 mx-auto border-2 p-2 rounded-md text-center w-[200px] bg-black text-white'><Link href="/LoginPage">Login</Link></li>
+          <Link className='' href="/LoginPage"><li className='my-2 mx-auto border-2 p-2 rounded-md text-center w-[200px] bg-black text-white'>Login</li></Link>
         )}
 
 
 
-        <li className='my-2 mx-auto border-2 p-2 rounded-md text-center w-[200px] bg-black text-white'><Link href="/AboutPage">About Me</Link></li>
-        <li className='my-2 mx-auto border-2 p-2 rounded-md text-center w-[200px] bg-black text-white'><Link href="/ContactPage">Contact Me</Link></li>
+        <Link className='' href="/AboutPage"><li className='my-2 mx-auto border-2 p-2 rounded-md text-center w-[200px] bg-black text-white'>About Me</li></Link>
+        <Link className='' href="/ContactPage"><li className='my-2 mx-auto border-2 p-2 rounded-md text-center w-[200px] bg-black text-white'>Contact Me</li></Link>
       </ul>
     </div>
   )

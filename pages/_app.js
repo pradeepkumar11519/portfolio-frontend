@@ -10,6 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
 import { CloseOffCanvasNavbar } from '../Components/OffCanvasNavbar'
 import React from 'react'
+
 function MyApp({ Component, pageProps }) {
 	const queryClient = React.useRef(new QueryClient())
 	const router = useRouter()
@@ -33,6 +34,14 @@ function MyApp({ Component, pageProps }) {
 			<ContextProvider>
 				<div className=''>
 					<Navbar />
+					<LoadingBar
+              color='#E11D48'
+              progress={Progress}
+              height={5}
+              shadowStyle={{'height':'5px','width':'20px'}}
+              waitingTime={200}
+              onLoaderFinished={() => setProgress(0)}
+            />
 					<ToastContainer/>
 					<div className='pt-20'>
 						<Component {...pageProps} />
